@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tralalerito Game</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #88ccee; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    let scene, camera, renderer, tralalerito, keys = {};
+    const speed = 0.05;
+
+    init();
+    animate();
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x88ccee);
+
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2, 5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(10, 20, 10);
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0x888888));
+
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(100, 100),
+        new THREE.MeshLambertMaterial({ color: 0x228833 })
+      );
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = 0;
+      scene.add(ground);
+
+      const loader = new THREE.GLTFLoader();
+      loader.load('scene.bin', function (gltf) {
+        tralalerito = gltf.scene;
+        tralalerito.scale.set(1, 1, 1);
+        tralalerito.position.set(0, 0, 0);
+        scene.add(tralalerito);
+      });
+
+      window.addEventListener('keydown', e => keys[e.key] = true);
+      window.addEventListener('keyup', e => keys[e.key] = false);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (tralalerito) {
+        if (keys['ArrowUp']) tralalerito.position.z -= speed;
+        if (keys['ArrowDown']) tralalerito.position.z += speed;
+        if (keys['ArrowLeft']) tralalerito.position.x -= speed;
+        if (keys['ArrowRight']) tralalerito.position.x += speed;
+
+        camera.position.x = tralalerito.position.x;
+        camera.position.z = tralalerito.position.z + 5;
+        camera.lookAt(tralalerito.position);
+      }
+
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>
