@@ -42,7 +42,7 @@ const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Wait for DOM to be ready before appending
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("container3D");
   if (container) {
     container.appendChild(renderer.domElement);
